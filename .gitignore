@@ -1,0 +1,14 @@
+﻿.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+logs/*.log
+archive/*
+!archive/.gitkeep
+data/drop_folder/*
+!data/drop_folder/.gitkeep
+.venv/
+venv/
