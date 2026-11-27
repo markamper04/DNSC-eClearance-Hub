@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0F6238">
   <title>DNSC — e-Clearance Hub</title>
+  <link rel="icon" type="image/jpeg" href="dnsc-logo.jpg">
+  <link rel="apple-touch-icon" href="dnsc-logo.jpg">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
@@ -13,38 +15,44 @@
 <body>
   <div id="live-announcer" class="visually-hidden" aria-live="polite"></div>
 
-  <!-- Sign In View -->
-  <main id="view-login" class="login-screen">
-    <section class="login-card" aria-labelledby="login-title">
-      <div class="login-head">
-        <div style="display:inline-flex;align-items:center;gap:0.65rem;justify-content:center;">
-          <img class="brand-logo" src="dnsc-logo.jpg" alt="DNSC Seal" width="42" height="42" style="width:42px;height:42px;">
-          <div style="text-align:left;line-height:1.1;">
-            <div style="font-weight:800;font-size:1.2rem;color:var(--ink);">DNSC</div>
-            <div style="font-size:0.7rem;font-weight:700;color:var(--dnsc-green);text-transform:uppercase;">e-Clearance Hub</div>
-          </div>
+  <!-- Sign In View (Modern Split Layout) -->
+  <main id="view-login" class="login-split">
+    <section class="login-hero" aria-label="DNSC e-Clearance Hub">
+      <div class="login-hero-inner">
+        <div class="hero-brand">
+          <img class="brand-logo" src="dnsc-logo.jpg" alt="DNSC Seal" width="40" height="40" style="width:40px;height:40px;">
+          <span>Davao del Norte State College</span>
         </div>
-        <h1 id="login-title">Welcome Back</h1>
-        <p>Sign in with your DNSC account</p>
+        <h1 class="hero-title">e-Clearance Hub</h1>
+        <p class="hero-desc">One clearance status across Registrar, Library, Accounting, and Student Affairs—accessible anytime from your phone.</p>
       </div>
+    </section>
 
-      <form id="login-form" novalidate>
-        <div class="field">
-          <label for="login-username">Student ID or Staff Username</label>
-          <span id="user-hint" class="hint">Example: 2023-59928, staff_lib, or admin</span>
-          <input id="login-username" name="username" type="text" required minlength="3" autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" aria-describedby="user-hint">
-          <div class="error-msg">Enter a valid ID or username (at least 3 characters).</div>
+    <section class="login-pane" aria-labelledby="login-title">
+      <div class="login-form-wrap">
+        <div class="login-head">
+          <h2 id="login-title">Welcome!</h2>
+          <p>Please sign in to your account.</p>
         </div>
 
-        <div class="field">
-          <label for="login-password">Password</label>
-          <input id="login-password" name="password" type="password" required autocomplete="current-password">
-          <div class="error-msg">Password is required.</div>
-        </div>
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="login-username">Student ID or Staff Username</label>
+            <span id="user-hint" class="hint">Example: 2023-59928, staff_lib, or admin</span>
+            <input id="login-username" name="username" type="text" required minlength="3" autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" aria-describedby="user-hint">
+            <div class="error-msg">Enter a valid ID or username (at least 3 characters).</div>
+          </div>
 
-        <div id="login-error" class="notice notice-error" role="alert" hidden style="margin-bottom:1rem;"></div>
-        <button id="login-submit" type="submit" class="btn-primary btn-full">Sign In</button>
-      </form>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" required autocomplete="current-password">
+            <div class="error-msg">Password is required.</div>
+          </div>
+
+          <div id="login-error" class="notice notice-error" role="alert" hidden style="margin-bottom:1rem;"></div>
+          <button id="login-submit" type="submit" class="btn-primary btn-full">Sign In</button>
+        </form>
+      </div>
     </section>
   </main>
 
