@@ -4,6 +4,8 @@ __pycache__/
 .pytest_cache/
 logs/
 archive/
+quarantine/
+drop_folder/
 WORKLOAD.md
 PLAN.md
 .impeccable/
