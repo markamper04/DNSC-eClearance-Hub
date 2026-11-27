@@ -7,9 +7,9 @@
   "theme_color": "#0F6238",
   "icons": [
     {
-      "src": "/dnsc-logo.jpg",
+      "src": "/eclearance-icon.png",
       "sizes": "192x192",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ]
 }

@@ -334,4 +334,12 @@ document.querySelectorAll("[data-export]").forEach((btn) => {
   });
 });
 
+$("toggle-pw")?.addEventListener("click", (e) => {
+  const input = $("login-password");
+  const show = input.type === "password";
+  input.type = show ? "text" : "password";
+  e.currentTarget.setAttribute("aria-pressed", String(show));
+  e.currentTarget.textContent = show ? "Hide" : "Show";
+});
+
 bootSession();

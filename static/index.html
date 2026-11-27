@@ -4,9 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0F6238">
-  <title>DNSC — e-Clearance Hub</title>
-  <link rel="icon" type="image/jpeg" href="dnsc-logo.jpg">
-  <link rel="apple-touch-icon" href="dnsc-logo.jpg">
+  <title>DNSC e-Clearance Hub</title>
+  <link rel="icon" type="image/png" href="eclearance-icon.png">
+  <link rel="apple-touch-icon" href="eclearance-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
@@ -19,38 +22,37 @@
   <main id="view-login" class="login-split">
     <section class="login-hero" aria-label="DNSC e-Clearance Hub">
       <div class="login-hero-inner">
-        <div class="hero-brand">
-          <img class="brand-logo" src="dnsc-logo.jpg" alt="DNSC Seal" width="40" height="40" style="width:40px;height:40px;">
-          <span>Davao del Norte State College</span>
-        </div>
         <h1 class="hero-title">e-Clearance Hub</h1>
-        <p class="hero-desc">One clearance status across Registrar, Library, Accounting, and Student Affairs—accessible anytime from your phone.</p>
+        <p class="hero-desc">One clearance status across Registrar, Library, Accounting, and Student Affairs, accessible anytime from your phone.</p>
       </div>
     </section>
 
     <section class="login-pane" aria-labelledby="login-title">
       <div class="login-form-wrap">
         <div class="login-head">
+          <img src="eclearance-logo.png" alt="DNSC e-Clearance Hub" style="height:56px;width:auto;margin-bottom:1.25rem;display:block;">
           <h2 id="login-title">Welcome!</h2>
-          <p>Please sign in to your account.</p>
+          <p>Sign in to check or manage clearance records.</p>
         </div>
 
         <form id="login-form" novalidate>
           <div class="field">
             <label for="login-username">Student ID or Staff Username</label>
-            <span id="user-hint" class="hint">Example: 2023-59928, staff_lib, or admin</span>
-            <input id="login-username" name="username" type="text" required minlength="3" autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" aria-describedby="user-hint">
+            <input id="login-username" name="username" type="text" required minlength="3" autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false">
             <div class="error-msg">Enter a valid ID or username (at least 3 characters).</div>
           </div>
 
           <div class="field">
             <label for="login-password">Password</label>
-            <input id="login-password" name="password" type="password" required autocomplete="current-password">
+            <div class="pw-wrap">
+              <input id="login-password" name="password" type="password" required autocomplete="current-password">
+              <button type="button" id="toggle-pw" class="pw-toggle" aria-pressed="false" aria-label="Show password">Show</button>
+            </div>
             <div class="error-msg">Password is required.</div>
           </div>
 
           <div id="login-error" class="notice notice-error" role="alert" hidden style="margin-bottom:1rem;"></div>
-          <button id="login-submit" type="submit" class="btn-primary btn-full">Sign In</button>
+          <button id="login-submit" type="submit" class="btn-primary btn-lg">Sign In</button>
         </form>
       </div>
     </section>
@@ -81,7 +83,7 @@
           <button type="button" class="menu-toggle" id="sidebar-toggle" aria-expanded="true" aria-controls="app-sidebar" aria-label="Toggle sidebar">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          <span class="topbar-title">DNSC — e-Clearance Hub</span>
+          <span class="topbar-title">DNSC e-Clearance Hub</span>
         </div>
         <div class="user-chip">
           <span id="user-label"></span>
