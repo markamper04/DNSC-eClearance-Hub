@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0F6238">
+  <title>DNSC — e-Clearance Hub</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div id="live-announcer" class="visually-hidden" aria-live="polite"></div>
+
+  <!-- Sign In View -->
+  <main id="view-login" class="login-screen">
+    <section class="login-card" aria-labelledby="login-title">
+      <div class="login-head">
+        <div style="display:inline-flex;align-items:center;gap:0.65rem;justify-content:center;">
+          <img class="brand-logo" src="dnsc-logo.jpg" alt="DNSC Seal" width="42" height="42" style="width:42px;height:42px;">
+          <div style="text-align:left;line-height:1.1;">
+            <div style="font-weight:800;font-size:1.2rem;color:var(--ink);">DNSC</div>
+            <div style="font-size:0.7rem;font-weight:700;color:var(--dnsc-green);text-transform:uppercase;">e-Clearance Hub</div>
+          </div>
+        </div>
+        <h1 id="login-title">Welcome Back</h1>
+        <p>Sign in with your DNSC account</p>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="login-username">Student ID or Staff Username</label>
+          <span id="user-hint" class="hint">Example: 2023-59928, staff_lib, or admin</span>
+          <input id="login-username" name="username" type="text" required minlength="3" autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" aria-describedby="user-hint">
+          <div class="error-msg">Enter a valid ID or username (at least 3 characters).</div>
+        </div>
+
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" required autocomplete="current-password">
+          <div class="error-msg">Password is required.</div>
+        </div>
+
+        <div id="login-error" class="notice notice-error" role="alert" hidden style="margin-bottom:1rem;"></div>
+        <button id="login-submit" type="submit" class="btn-primary btn-full">Sign In</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Authenticated App Shell -->
+  <div id="view-app" class="shell" hidden>
+    <aside id="app-sidebar" class="sidebar" aria-label="Primary">
+      <div class="brand">
+        <img class="brand-logo" src="dnsc-logo.jpg" alt="DNSC Seal" width="36" height="36">
+        <div>
+          <div class="brand-name">DNSC</div>
+          <div class="brand-sub">e-Clearance Hub</div>
+        </div>
+      </div>
+
+      <ul id="sidebar-nav" class="nav-list"></ul>
+
+      <div class="sidebar-foot">
+        <div id="sidebar-role-label"></div>
+        <div>1st Sem, AY 2026–2027</div>
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="menu-toggle" id="sidebar-toggle" aria-expanded="true" aria-controls="app-sidebar" aria-label="Toggle sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <span class="topbar-title">DNSC — e-Clearance Hub</span>
+        </div>
+        <div class="user-chip">
+          <span id="user-label"></span>
+          <button type="button" class="btn-secondary" id="logout-btn">Sign Out</button>
+        </div>
+      </header>
+
+      <nav id="mobile-nav" popover aria-label="Mobile navigation" style="padding:1rem;border:1px solid var(--border);border-radius:12px;">
+        <ul id="mobile-nav-list" class="nav-list" style="color:var(--ink);"></ul>
+      </nav>
+
+      <main class="content">
+        <div id="app-flash" class="notice" hidden></div>
+
+        <!-- Student View -->
+        <section id="panel-student" hidden>
+          <div class="page-head">
+            <div>
+              <h1>My Clearance</h1>
+              <p id="student-meta" class="meta-line"></p>
+            </div>
+          </div>
+
+          <div class="panel status-strip" style="margin-top:1rem;">
+            <div>
+              <strong>Overall Clearance Status</strong>
+              <p id="student-summary-note" class="meta-line"></p>
+            </div>
+            <span id="student-overall-badge" class="badge"></span>
+          </div>
+
+          <div tabindex="0" role="region" aria-labelledby="student-table-cap" class="table-wrapper" style="margin-top:1rem;">
+            <table>
+              <caption id="student-table-cap">Office Clearance Breakdown</caption>
+              <thead>
+                <tr>
+                  <th>Office</th>
+                  <th>Status</th>
+                  <th>Remarks</th>
+                  <th>Updated</th>
+                </tr>
+              </thead>
+              <tbody id="student-offices-body"></tbody>
+            </table>
+          </div>
+
+          <div class="panel" style="margin-top:1rem;">
+            <h2>Verifiable QR Clearance Slip</h2>
+            <div id="slip-content"></div>
+          </div>
+        </section>
+
+        <!-- Staff View -->
+        <section id="panel-staff" hidden>
+          <div class="page-head">
+            <div>
+              <h1>Office Clearance Desk</h1>
+              <p id="staff-meta" class="meta-line"></p>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:1rem;">
+            <h2>Update Student Clearance / Student Affairs Entry</h2>
+            <form id="staff-update-form" class="form-grid" novalidate>
+              <div class="field" style="margin:0;">
+                <label for="staff-sid">Student ID</label>
+                <input id="staff-sid" type="text" required pattern="\d{4}-\d{5}" placeholder="2023-59928">
+                <div class="error-msg">Format: YYYY-NNNNN</div>
+              </div>
+              <div class="field" style="margin:0;">
+                <label for="staff-office">Office</label>
+                <select id="staff-office" required>
+                  <option value="Library">Library</option>
+                  <option value="Accounting">Accounting</option>
+                  <option value="Student Affairs">Student Affairs</option>
+                  <option value="Registrar">Registrar</option>
+                </select>
+              </div>
+              <div class="field" style="margin:0;">
+                <label for="staff-status">Status</label>
+                <select id="staff-status" required>
+                  <option value="CLEARED">CLEARED</option>
+                  <option value="HOLD">HOLD</option>
+                </select>
+              </div>
+              <div class="field" style="margin:0;">
+                <label for="staff-reason">Remarks / Equipment / Hold Reason</label>
+                <input id="staff-reason" type="text" maxlength="200" placeholder="Cleared or reason for hold">
+              </div>
+              <button type="submit" class="btn-primary">Save Status</button>
+            </form>
+          </div>
+
+          <div class="panel" style="margin-top:1rem;">
+            <h2>Verify QR Clearance Slip Token</h2>
+            <form id="verify-slip-form" class="row-actions" novalidate>
+              <label for="verify-token-input" class="visually-hidden">Slip Token</label>
+              <input id="verify-token-input" type="text" required placeholder="Paste signed slip token" style="flex:1;min-width:220px;">
+              <button type="submit" class="btn-secondary">Verify Slip</button>
+            </form>
+            <div id="verify-result" class="notice" hidden style="margin-top:0.75rem;"></div>
+          </div>
+
+          <div class="panel" style="margin-top:1rem;">
+            <div class="page-head" style="margin-bottom:0.75rem;">
+              <h2 style="margin:0;">Students</h2>
+              <search>
+                <form id="staff-search-form" class="row-actions">
+                  <label for="staff-search-q" class="visually-hidden">Search students</label>
+                  <input id="staff-search-q" type="search" placeholder="Search ID or name">
+                  <button type="submit" class="btn-secondary">Search</button>
+                </form>
+              </search>
+            </div>
+            <div tabindex="0" role="region" aria-labelledby="staff-table-cap" class="table-wrapper">
+              <table>
+                <caption id="staff-table-cap">Student Clearance Directory</caption>
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Program</th>
+                    <th>Overall</th>
+                    <th>Offices</th>
+                  </tr>
+                </thead>
+                <tbody id="staff-students-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Admin View -->
+        <section id="panel-admin" hidden>
+          <div class="page-head">
+            <div>
+              <h1>Registrar &amp; Admin Console</h1>
+              <p class="meta-line">Sync masterlist, export masked reports, and review audit logs.</p>
+            </div>
+            <div class="row-actions">
+              <button type="button" class="btn-primary" id="sync-registrar-btn">Sync Registrar API</button>
+              <button type="button" class="btn-secondary" data-export="csv">Export CSV</button>
+              <button type="button" class="btn-secondary" data-export="json">Export JSON</button>
+              <button type="button" class="btn-secondary" data-export="xml">Export XML</button>
+            </div>
+          </div>
+
+          <div tabindex="0" role="region" aria-labelledby="audit-cap" class="table-wrapper" style="margin-top:1rem;">
+            <table>
+              <caption id="audit-cap">Recent Audit Log</caption>
+              <thead>
+                <tr>
+                  <th>When</th>
+                  <th>Who</th>
+                  <th>Action</th>
+                  <th>Target</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="admin-audit-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
