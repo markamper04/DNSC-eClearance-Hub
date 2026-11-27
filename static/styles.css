@@ -1,6 +1,6 @@
 :root {
-  --dnsc-green: #0F6238;
-  --dnsc-green-hover: #0B4D2B;
+  --dnsc-green: #106B47;
+  --dnsc-green-hover: #0B5236;
   --dnsc-olive: #4A7729;
   --bg: #F4F6F8;
   --surface: #FFFFFF;
@@ -45,16 +45,18 @@ body {
   outline-offset: 2px;
 }
 
-/* App Shell with subtle 200ms sidebar collapse */
+/* App Shell with subtle 200ms sidebar mini-rail collapse + DNSC green outer frame */
 .shell {
   min-height: 100dvh;
   display: grid;
   grid-template-columns: var(--sidebar-w) 1fr;
+  background: var(--dnsc-green);
+  padding: 0.65rem 0.65rem 0.65rem 0;
   transition: grid-template-columns 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .shell.sidebar-collapsed {
-  grid-template-columns: 0px 1fr;
+  grid-template-columns: 68px 1fr;
 }
 
 .sidebar {
@@ -62,27 +64,37 @@ body {
   color: #FFFFFF;
   display: flex;
   flex-direction: column;
-  padding: 1rem 0.75rem;
+  padding: 0.35rem 0.75rem;
   gap: 1.25rem;
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
-  transition: opacity 160ms ease, padding 200ms cubic-bezier(0.22, 1, 0.36, 1), visibility 200ms;
 }
 
 .shell.sidebar-collapsed .sidebar {
-  opacity: 0;
-  visibility: hidden;
-  padding-inline: 0;
+  padding: 0.35rem 0.6rem;
+  align-items: center;
+}
+
+.shell.sidebar-collapsed .brand,
+.shell.sidebar-collapsed .nav-btn-label,
+.shell.sidebar-collapsed .nav-btn-arrow,
+.shell.sidebar-collapsed .nav-btn[aria-current="page"] .nav-btn-arrow,
+.shell.sidebar-collapsed .sidebar-foot {
+  display: none;
+}
+
+.shell.sidebar-collapsed .nav-btn {
+  justify-content: center;
+  padding: 0.7rem;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.6rem 0.75rem;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
   background: #FFFFFF;
-  color: var(--ink);
   border-radius: 10px;
 }
 
@@ -118,25 +130,42 @@ body {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.65rem;
-  padding: 0.6rem 0.75rem;
+  padding: 0.65rem 0.85rem;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: transparent;
-  color: #ECFDF5;
+  color: #E2F5EC;
   font: inherit;
-  font-weight: 500;
+  font-weight: 400;
   text-align: left;
   cursor: pointer;
   transition: background-color 150ms ease, color 150ms ease;
 }
 
-.nav-btn:hover { background: rgba(255, 255, 255, 0.12); }
+.nav-btn-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.nav-btn-arrow {
+  display: none;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.nav-btn:hover { background: rgba(0, 0, 0, 0.14); }
 
 .nav-btn[aria-current="page"] {
-  background: #FFFFFF;
-  color: var(--dnsc-green);
-  font-weight: 600;
+  background: rgba(0, 0, 0, 0.24);
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.nav-btn[aria-current="page"] .nav-btn-arrow {
+  display: grid;
 }
 
 .sidebar-foot {
@@ -151,6 +180,9 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  background: var(--bg);
+  border-radius: 14px;
+  overflow: hidden;
 }
 
 .topbar {
@@ -186,16 +218,48 @@ body {
 .menu-toggle:hover { background: #F1F5F9; }
 
 .topbar-title {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 1.125rem;
 }
 
 .user-chip {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  font-size: 0.85rem;
-  color: var(--muted);
+  font-size: 0.875rem;
+  color: var(--ink);
+}
+
+.user-menu-btn {
+  anchor-name: --user-menu-btn;
+  min-height: 36px;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.user-menu-btn:hover { background: #F8FAFC; }
+
+.user-menu-popover {
+  position: fixed;
+  inset: auto;
+  inset-block-start: 4rem;
+  inset-inline-end: 1.5rem;
+  inset-block-start: anchor(--user-menu-btn bottom);
+  inset-inline-end: anchor(--user-menu-btn right);
+  margin-block-start: 0.4rem;
+  min-width: 180px;
+  padding: 0.65rem;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
 }
 
 .avatar {
@@ -212,7 +276,6 @@ body {
 
 .content {
   padding: 1.5rem;
-  max-width: 1080px;
   width: 100%;
   display: grid;
   gap: 1.25rem;

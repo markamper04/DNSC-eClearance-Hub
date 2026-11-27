@@ -62,19 +62,10 @@
   <div id="view-app" class="shell" hidden>
     <aside id="app-sidebar" class="sidebar" aria-label="Primary">
       <div class="brand">
-        <img class="brand-logo" src="dnsc-logo.jpg" alt="DNSC Seal" width="36" height="36">
-        <div>
-          <div class="brand-name">DNSC</div>
-          <div class="brand-sub">e-Clearance Hub</div>
-        </div>
+        <img src="eclearance-logo.png" alt="DNSC e-Clearance Hub" style="width:100%;height:42px;object-fit:contain;">
       </div>
 
       <ul id="sidebar-nav" class="nav-list"></ul>
-
-      <div class="sidebar-foot">
-        <div id="sidebar-role-label"></div>
-        <div>1st Sem, AY 2026–2027</div>
-      </div>
     </aside>
 
     <div class="main-col">
@@ -86,8 +77,11 @@
           <span class="topbar-title">DNSC e-Clearance Hub</span>
         </div>
         <div class="user-chip">
-          <span id="user-label"></span>
-          <button type="button" class="btn-secondary" id="logout-btn">Sign Out</button>
+          <button type="button" id="user-label" class="user-menu-btn" popovertarget="user-menu-popover" aria-haspopup="true"></button>
+          <div id="user-menu-popover" popover="auto" class="user-menu-popover">
+            <div id="user-role-meta" class="hint" style="padding:0.25rem 0.5rem 0.5rem;"></div>
+            <button type="button" class="btn-secondary btn-full" id="logout-btn">Sign Out</button>
+          </div>
         </div>
       </header>
 

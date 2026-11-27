@@ -60,6 +60,11 @@ function renderNav(role) {
       ? [{ id: "panel-staff", label: "Clearance Desk" }]
       : [{ id: "panel-admin", label: "Admin Console" }, { id: "panel-staff", label: "Clearance Desk" }];
 
+  const iconSvg = (id) => id === "panel-admin"
+    ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'
+    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>';
+  const arrowSvg = '<span class="nav-btn-arrow" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg></span>';
+
   const buildList = (container, isMobile) => {
     container.innerHTML = "";
     items.forEach((item, idx) => {
@@ -67,8 +72,11 @@ function renderNav(role) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = isMobile ? "btn-secondary btn-full" : "nav-btn";
+      btn.dataset.panel = item.id;
       if (idx === 0) btn.setAttribute("aria-current", "page");
-      btn.textContent = item.label;
+      btn.innerHTML = isMobile
+        ? esc(item.label)
+        : `<span class="nav-btn-left">${iconSvg(item.id)}<span class="nav-btn-label">${esc(item.label)}</span></span>${arrowSvg}`;
       btn.addEventListener("click", () => {
         switchPanel(item.id);
         if (isMobile) $("mobile-nav").hidePopover();
@@ -88,9 +96,7 @@ function switchPanel(panelId) {
     $(id).hidden = id !== panelId;
   });
   $("sidebar-nav").querySelectorAll("button").forEach((b) => {
-    const active = (b.textContent === "My Clearance" && panelId === "panel-student")
-      || (b.textContent === "Clearance Desk" && panelId === "panel-staff")
-      || (b.textContent === "Admin Console" && panelId === "panel-admin");
+    const active = b.dataset.panel === panelId;
     if (active) b.setAttribute("aria-current", "page");
     else b.removeAttribute("aria-current");
   });
@@ -204,8 +210,8 @@ async function bootSession() {
     state.user = data.user;
     $("view-login").hidden = true;
     $("view-app").hidden = false;
-    $("user-label").textContent = `${state.user.sub} (${state.user.role})`;
-    $("sidebar-role-label").textContent = `Signed in as ${state.user.role}`;
+    $("user-label").textContent = state.user.sub;
+    $("user-role-meta").textContent = `Role: ${state.user.role}`;
     renderNav(state.user.role);
   } catch {
     sessionStorage.removeItem("hub_token");
@@ -245,6 +251,7 @@ $("login-form").addEventListener("submit", async (e) => {
 });
 
 $("logout-btn").addEventListener("click", () => {
+  $("user-menu-popover").hidePopover();
   sessionStorage.removeItem("hub_token");
   state.token = "";
   state.user = null;
