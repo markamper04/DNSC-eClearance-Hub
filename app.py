@@ -175,6 +175,11 @@ def index():
     return jsonify({"service": "DNSC e-Clearance Hub API", "status": "ok"})
 
 
+@app.route("/api/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"})
+
+
 @app.route("/api/auth/login", methods=["POST"])
 def login():
     data = request.get_json(silent=True) or {}
