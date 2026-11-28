@@ -73,6 +73,8 @@ function renderNav(role) {
       btn.type = "button";
       btn.className = isMobile ? "btn-secondary btn-full" : "nav-btn";
       btn.dataset.panel = item.id;
+      btn.setAttribute("aria-label", item.label);
+      btn.title = item.label;
       if (idx === 0) btn.setAttribute("aria-current", "page");
       btn.innerHTML = isMobile
         ? esc(item.label)
@@ -252,6 +254,7 @@ $("login-form").addEventListener("submit", async (e) => {
 
 $("logout-btn").addEventListener("click", () => {
   $("user-menu-popover").hidePopover();
+  $("login-form").reset();
   sessionStorage.removeItem("hub_token");
   state.token = "";
   state.user = null;

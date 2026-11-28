@@ -345,7 +345,10 @@ def admin_sync_registrar():
     now = _now_iso()
     for s in students:
         sid = s["student_id"]
-        reg_status = s.get("status", "ACTIVE")
+        reg_status = s.get("status", "ENROLLED")
+        full_name = s.get("name") or f"{s['last_name']}, {s['first_name']} {s.get('middle_initial', '')}.".strip()
+        program = s.get("program_code") or s.get("program", "")
+        year = int(s.get("year_level") or s.get("year", 1))
         db.execute(
             """INSERT INTO students (student_id, name, program, year, email, registrar_status)
                VALUES (?, ?, ?, ?, ?, ?)
@@ -355,7 +358,7 @@ def admin_sync_registrar():
                  year = excluded.year,
                  email = excluded.email,
                  registrar_status = excluded.registrar_status""",
-            (sid, s["name"], s["program"], int(s["year"]), s["email"], reg_status),
+            (sid, full_name, program, year, s["email"], reg_status),
         )
         # LOA students are placed on HOLD at the Registrar office
         office_status = "HOLD" if reg_status == "LOA" else "CLEARED"
