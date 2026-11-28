@@ -43,7 +43,10 @@ def _db_path():
 
 def get_db():
     if "db" not in g:
-        g.db = sqlite3.connect(_db_path())
+        db_file = _db_path()
+        if not os.path.exists(db_file):
+            init_db(db_file)
+        g.db = sqlite3.connect(db_file)
         g.db.row_factory = sqlite3.Row
     return g.db
 
