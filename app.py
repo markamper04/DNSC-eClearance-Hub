@@ -81,7 +81,13 @@ def init_db(db_path=None):
             "INSERT INTO users (username, password_hash, role, office, student_id) VALUES (?, ?, ?, ?, ?)",
             demo_users,
         )
-        conn.commit()
+
+    if conn.execute("SELECT COUNT(*) FROM students").fetchone()[0] == 0:
+        seed_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), "starter_kit", "registrar_students.json")
+        if os.path.exists(seed_json):
+            with open(seed_json, encoding="utf-8") as f:
+                _upsert_students(conn, json.load(f).get("students", []), "system_seed")
+    conn.commit()
     conn.close()
 
 
@@ -341,15 +347,8 @@ def staff_update_clearance():
     return jsonify({"student_id": sid, "office": office, "status": status, "reason": reason})
 
 
-@app.route("/api/admin/sync-registrar", methods=["POST"])
-@require_auth(roles={"admin"})
-def admin_sync_registrar():
-    try:
-        students = clients.fetch_all_students()
-    except clients.ExternalAPIError as exc:
-        return jsonify({"error": str(exc)}), 502
-
-    db = get_db()
+def _upsert_students(db, students, actor: str):
+    """Upsert Registrar student records and initialize per-office clearance rows."""
     now = _now_iso()
     for s in students:
         sid = s["student_id"]
@@ -377,7 +376,7 @@ def admin_sync_registrar():
                ON CONFLICT(student_id, office) DO UPDATE SET
                  status = excluded.status, reason = excluded.reason,
                  updated_by = excluded.updated_by, updated_at = excluded.updated_at""",
-            (sid, office_status, reason, g.user["sub"], now),
+            (sid, office_status, reason, actor, now),
         )
         for office in ("Library", "Accounting", "Student Affairs"):
             db.execute(
@@ -385,6 +384,18 @@ def admin_sync_registrar():
                    VALUES (?, ?, 'HOLD', 'Pending clearance', 'system', ?)""",
                 (sid, office, now),
             )
+
+
+@app.route("/api/admin/sync-registrar", methods=["POST"])
+@require_auth(roles={"admin"})
+def admin_sync_registrar():
+    try:
+        students = clients.fetch_all_students()
+    except clients.ExternalAPIError as exc:
+        return jsonify({"error": str(exc)}), 502
+
+    db = get_db()
+    _upsert_students(db, students, g.user["sub"])
     _log_audit(db, g.user["sub"], "SYNC_REGISTRAR", "students", f"Synced {len(students)} students")
     db.commit()
     return jsonify({"synced": len(students)})
